@@ -6,8 +6,6 @@ import 'package:my_shop/myCart.dart';
 import 'package:my_shop/productDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'details.dart';
-
 class listProducts extends StatefulWidget {
   static const routeName = '/categories';
   _HomePageState createState() => _HomePageState();

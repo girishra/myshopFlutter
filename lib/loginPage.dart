@@ -9,6 +9,8 @@ import 'service/login_service.dart';
 import 'package:my_shop/util/http_exception_dialog.dart';
 import 'main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:flushbar/flushbar.dart';
 
 
 
@@ -24,6 +26,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  Flushbar flush;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
    TextEditingController loginEmailController = new TextEditingController();
   TextEditingController loginPasswordController = new TextEditingController();
    bool _loading = false;
@@ -72,6 +76,17 @@ class _LoginPageState extends State<LoginPage> {
            setState(() {
              print("Login Failed");
              _loading = false;
+                       flush= Flushbar<bool>(
+                                mainButton: FlatButton(
+                                  onPressed: (){
+                                    flush.dismiss(true);
+                                  },
+                                  child: Text('OK',style: TextStyle(fontSize: 16.0, color: Colors.yellow, fontWeight: FontWeight.bold),),
+                                ),
+                                borderRadius: 10,
+                                message: "email or password is incorect",
+                                duration: Duration(seconds: 6),
+                              )..show(context);
            });
            print("userrrr");
            print(user);
@@ -199,43 +214,46 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    return Scaffold(
-        body: Container(
-          height: height,
-          child: Stack(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+    return Scaffold(key: _scaffoldKey,
+        body: ModalProgressHUD(
+           inAsyncCall: _loading,
+                  child: Container(
+            height: height,
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
 
-                      _logo(),
-                      SizedBox(height: 50),
-                      _emailPasswordWidget(),
-                      SizedBox(height: 20),
-                      _submitButton(),
-                      GestureDetector(
-                        onTap: (){
-                        Navigator.pushReplacement(context,new MaterialPageRoute(builder: (context) => new SignUpPage()));
+                        _logo(),
+                        SizedBox(height: 50),
+                        _emailPasswordWidget(),
+                        SizedBox(height: 20),
+                        _submitButton(),
+                        GestureDetector(
+                          onTap: (){
+                          Navigator.pushReplacement(context,new MaterialPageRoute(builder: (context) => new SignUpPage()));
 
-                        },
-                                              child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          alignment: Alignment.centerRight,
-                          child: Text('Sign up',
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w500)),
+                          },
+                                                child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            alignment: Alignment.centerRight,
+                            child: Text('Sign up',
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w500)),
+                          ),
                         ),
-                      ),
 
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ));
   }
